@@ -1,4 +1,4 @@
-data/*
+data/elliptic_bitcoin_dataset/
 __pycache__/
 *.pyc
 .env
