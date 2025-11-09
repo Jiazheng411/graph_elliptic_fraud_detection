@@ -456,7 +456,7 @@ def train_gcn(train_data, test_data, include_unknowns, num_epochs=2000, shared_t
                     
                     checkpoint_path = os.path.join(checkpoint_dir, f'checkpoint_epoch_{epoch:04d}.pt')
                     torch.save(checkpoint, checkpoint_path)
-                    print(f"Checkpoint saved to: checkpoint_epoch_{epoch:04d}.pt (F1={test_metrics['f1']:.4f}, Best F1={best_illicit_f1:.4f})")
+                    # print(f"Checkpoint saved to: checkpoint_epoch_{epoch:04d}.pt (F1={test_metrics['f1']:.4f}, Best F1={best_illicit_f1:.4f})")
         
     # Final evaluation
     model.eval()
