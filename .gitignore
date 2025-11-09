@@ -5,3 +5,6 @@ __pycache__/
 .vscode/
 .DS_Store
 .ipynb_checkpoints
+checkpoints/
+archieve/
+splits/
