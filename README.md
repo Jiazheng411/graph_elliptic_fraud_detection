@@ -12,6 +12,7 @@ paper: https://arxiv.org/pdf/1908.02591
 
 just run `run_simple_split.py` to split data. data will be saved to `splits/` folder. Note: put the raw data under `data/` folder
 
+### Experiments see next section
 
 ## Model & experiment
 
