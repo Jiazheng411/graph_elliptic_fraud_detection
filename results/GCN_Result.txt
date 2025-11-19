@@ -1,0 +1,323 @@
+
+GCN - Labeled Only Best Classification Report on Labeled Test Graph at epoch 1450:
+              precision    recall  f1-score   support
+
+     illicit       0.78      0.54      0.63      1083
+       licit       0.97      0.99      0.98     15587
+
+    accuracy                           0.96     16670
+   macro avg       0.87      0.76      0.81     16670
+weighted avg       0.96      0.96      0.96     16670
+
+[GCN - Labeled Only] per-timestep illicit metrics:
+  t=35 | nodes= 1341 | Loss=0.1771 | P=0.8415 | R=0.8462 | F1=0.8438
+  t=36 | nodes= 1708 | Loss=0.1013 | P=0.3939 | R=0.3939 | F1=0.3939
+  t=37 | nodes=  498 | Loss=0.2881 | P=0.7778 | R=0.5250 | F1=0.6269
+  t=38 | nodes=  756 | Loss=0.3348 | P=0.8462 | R=0.7928 | F1=0.8186
+  t=39 | nodes= 1183 | Loss=0.2181 | P=0.8000 | R=0.4938 | F1=0.6107
+  t=40 | nodes= 1211 | Loss=0.6119 | P=0.7778 | R=0.3750 | F1=0.5060
+  t=41 | nodes= 1132 | Loss=1.3068 | P=0.7889 | R=0.6121 | F1=0.6893
+  t=42 | nodes= 2154 | Loss=0.4577 | P=0.9379 | R=0.6318 | F1=0.7550
+  t=43 | nodes= 1370 | Loss=0.2628 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=44 | nodes= 1591 | Loss=0.2976 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=45 | nodes= 1221 | Loss=0.0973 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=46 | nodes=  712 | Loss=0.0497 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=47 | nodes=  846 | Loss=0.4446 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=48 | nodes=  471 | Loss=1.0552 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=49 | nodes=  476 | Loss=1.6715 | P=0.0000 | R=0.0000 | F1=0.0000
+  Aggregate t<43 | P=0.8262 | R=0.6346 | F1=0.7178
+  Aggregate t>=43 | P=0.0000 | R=0.0000 | F1=0.0000
+
+
+-----------------------------------------------------------------------------------
+GCN - All Nodes Best Classification Report on Labeled Test Graph at epoch 600:
+              precision    recall  f1-score   support
+
+     illicit       0.71      0.46      0.56      1083
+       licit       0.96      0.99      0.98     15587
+
+    accuracy                           0.95     16670
+   macro avg       0.84      0.72      0.77     16670
+weighted avg       0.95      0.95      0.95     16670
+
+[GCN - All Nodes] per-timestep illicit metrics:
+  t=35 | nodes= 1341 | Loss=0.1773 | P=0.8935 | R=0.8297 | F1=0.8604
+  t=36 | nodes= 1708 | Loss=0.1440 | P=0.2571 | R=0.5455 | F1=0.3495
+  t=37 | nodes=  498 | Loss=0.3000 | P=0.7619 | R=0.4000 | F1=0.5246
+  t=38 | nodes=  756 | Loss=0.3114 | P=0.8404 | R=0.7117 | F1=0.7707
+  t=39 | nodes= 1183 | Loss=0.2477 | P=0.5133 | R=0.7160 | F1=0.5979
+  t=40 | nodes= 1211 | Loss=0.6054 | P=0.9138 | R=0.4732 | F1=0.6235
+  t=41 | nodes= 1132 | Loss=0.8518 | P=0.8764 | R=0.6724 | F1=0.7610
+  t=42 | nodes= 2154 | Loss=0.4675 | P=0.9209 | R=0.6820 | F1=0.7837
+  t=43 | nodes= 1370 | Loss=0.4788 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=44 | nodes= 1591 | Loss=0.3673 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=45 | nodes= 1221 | Loss=0.0923 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=46 | nodes=  712 | Loss=0.0475 | P=0.1429 | R=0.5000 | F1=0.2222
+  t=47 | nodes=  846 | Loss=0.4157 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=48 | nodes=  471 | Loss=1.1898 | P=0.0556 | R=0.0278 | F1=0.0370
+  t=49 | nodes=  476 | Loss=2.1084 | P=0.0000 | R=0.0000 | F1=0.0000
+  Aggregate t<43 | P=0.7788 | R=0.6740 | F1=0.7226
+  Aggregate t>=43 | P=0.0081 | R=0.0118 | F1=0.0096
+
+-----------------------------------------------------------------------------------
+BGRL Embeddings + Raw Features Best Classification Report on Labeled Test Graph at epoch 600:
+              precision    recall  f1-score   support
+
+     illicit       0.78      0.46      0.58      1083
+       licit       0.96      0.99      0.98     15587
+
+    accuracy                           0.96     16670
+   macro avg       0.87      0.72      0.78     16670
+weighted avg       0.95      0.96      0.95     16670
+
+[BGRL Embeddings + Raw Features] per-timestep illicit metrics:
+  t=35 | nodes= 1341 | Loss=0.1593 | P=0.8922 | R=0.8187 | F1=0.8539
+  t=36 | nodes= 1708 | Loss=0.1017 | P=0.5333 | R=0.4848 | F1=0.5079
+  t=37 | nodes=  498 | Loss=0.2616 | P=0.7586 | R=0.5500 | F1=0.6377
+  t=38 | nodes=  756 | Loss=0.2884 | P=0.8426 | R=0.8198 | F1=0.8311
+  t=39 | nodes= 1183 | Loss=0.1926 | P=0.8312 | R=0.7901 | F1=0.8101
+  t=40 | nodes= 1211 | Loss=0.5256 | P=0.8980 | R=0.3929 | F1=0.5466
+  t=41 | nodes= 1132 | Loss=0.5566 | P=0.8222 | R=0.6379 | F1=0.7184
+  t=42 | nodes= 2154 | Loss=0.3960 | P=0.8935 | R=0.6318 | F1=0.7402
+  t=43 | nodes= 1370 | Loss=0.2451 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=44 | nodes= 1591 | Loss=0.2777 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=45 | nodes= 1221 | Loss=0.0832 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=46 | nodes=  712 | Loss=0.0480 | P=0.2500 | R=0.5000 | F1=0.3333
+  t=47 | nodes=  846 | Loss=0.3078 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=48 | nodes=  471 | Loss=0.7860 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=49 | nodes=  476 | Loss=1.1939 | P=0.0000 | R=0.0000 | F1=0.0000
+  Aggregate t<43 | P=0.8498 | R=0.6685 | F1=0.7483
+  Aggregate t>=43 | P=0.0256 | R=0.0059 | F1=0.0096
+
+  -----------------------------------------------------------------------------------
+  BGRL Node Score + Raw Features Best Classification Report on Labeled Test Graph at epoch 600:
+              precision    recall  f1-score   support
+
+     illicit       0.68      0.50      0.58      1083
+       licit       0.97      0.98      0.97     15587
+
+    accuracy                           0.95     16670
+   macro avg       0.82      0.74      0.78     16670
+weighted avg       0.95      0.95      0.95     16670
+
+[BGRL Node Score + Raw Features] per-timestep illicit metrics:
+  t=35 | nodes= 1341 | Loss=0.1635 | P=0.8947 | R=0.8407 | F1=0.8669
+  t=36 | nodes= 1708 | Loss=0.1214 | P=0.5000 | R=0.6061 | F1=0.5479
+  t=37 | nodes=  498 | Loss=0.2600 | P=0.8500 | R=0.4250 | F1=0.5667
+  t=38 | nodes=  756 | Loss=0.2502 | P=0.8349 | R=0.8198 | F1=0.8273
+  t=39 | nodes= 1183 | Loss=0.2154 | P=0.5889 | R=0.6543 | F1=0.6199
+  t=40 | nodes= 1211 | Loss=0.5496 | P=0.9245 | R=0.4375 | F1=0.5939
+  t=41 | nodes= 1132 | Loss=0.8623 | P=0.8804 | R=0.6983 | F1=0.7788
+  t=42 | nodes= 2154 | Loss=0.3918 | P=0.9257 | R=0.6778 | F1=0.7826
+  t=43 | nodes= 1370 | Loss=0.2942 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=44 | nodes= 1591 | Loss=0.2904 | P=0.0833 | R=0.0417 | F1=0.0556
+  t=45 | nodes= 1221 | Loss=0.0815 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=46 | nodes=  712 | Loss=0.0498 | P=0.2000 | R=0.5000 | F1=0.2857
+  t=47 | nodes=  846 | Loss=0.3573 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=48 | nodes=  471 | Loss=0.9299 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=49 | nodes=  476 | Loss=1.7459 | P=0.0000 | R=0.0000 | F1=0.0000
+  Aggregate t<43 | P=0.8347 | R=0.6849 | F1=0.7524
+  Aggregate t>=43 | P=0.0116 | R=0.0118 | F1=0.0117
+  -----------------------------------------------------------------------------------
+  GAE Embeddings -> GCN Best Classification Report on Labeled Test Graph at epoch 800:
+              precision    recall  f1-score   support
+
+     illicit       0.46      0.36      0.40      1083
+       licit       0.96      0.97      0.96     15587
+
+    accuracy                           0.93     16670
+   macro avg       0.71      0.67      0.68     16670
+weighted avg       0.92      0.93      0.93     16670
+
+[GAE Embeddings -> GCN] per-timestep illicit metrics:
+  t=35 | nodes= 1341 | Loss=0.2408 | P=0.8280 | R=0.7143 | F1=0.7670
+  t=36 | nodes= 1708 | Loss=0.1673 | P=0.2963 | R=0.4848 | F1=0.3678
+  t=37 | nodes=  498 | Loss=0.2606 | P=0.5455 | R=0.4500 | F1=0.4932
+  t=38 | nodes=  756 | Loss=0.3197 | P=0.7963 | R=0.7748 | F1=0.7854
+  t=39 | nodes= 1183 | Loss=0.2681 | P=0.4000 | R=0.4198 | F1=0.4096
+  t=40 | nodes= 1211 | Loss=0.5203 | P=0.6761 | R=0.4286 | F1=0.5246
+  t=41 | nodes= 1132 | Loss=0.7150 | P=0.6466 | R=0.6466 | F1=0.6466
+  t=42 | nodes= 2154 | Loss=0.3982 | P=0.7304 | R=0.6234 | F1=0.6727
+  t=43 | nodes= 1370 | Loss=0.3246 | P=0.0267 | R=0.0833 | F1=0.0404
+  t=44 | nodes= 1591 | Loss=0.3206 | P=0.0543 | R=0.2083 | F1=0.0862
+  t=45 | nodes= 1221 | Loss=0.0776 | P=0.0667 | R=0.2000 | F1=0.1000
+  t=46 | nodes=  712 | Loss=0.1512 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=47 | nodes=  846 | Loss=0.3143 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=48 | nodes=  471 | Loss=0.7783 | P=0.0625 | R=0.0278 | F1=0.0385
+  t=49 | nodes=  476 | Loss=1.1366 | P=0.0000 | R=0.0000 | F1=0.0000
+  Aggregate t<43 | P=0.6715 | R=0.6083 | F1=0.6383
+  Aggregate t>=43 | P=0.0271 | R=0.0533 | F1=0.0359
+-----------------------------------------------------------------------------------
+Raw + GAE Embeddings Best Classification Report on Labeled Test Graph at epoch 600:
+              precision    recall  f1-score   support
+
+     illicit       0.64      0.50      0.56      1083
+       licit       0.97      0.98      0.97     15587
+
+    accuracy                           0.95     16670
+   macro avg       0.80      0.74      0.77     16670
+weighted avg       0.94      0.95      0.95     16670
+
+[Raw + GAE Embeddings] per-timestep illicit metrics:
+  t=35 | nodes= 1341 | Loss=0.1646 | P=0.8830 | R=0.8297 | F1=0.8555
+  t=36 | nodes= 1708 | Loss=0.1041 | P=0.3830 | R=0.5455 | F1=0.4500
+  t=37 | nodes=  498 | Loss=0.2196 | P=0.7600 | R=0.4750 | F1=0.5846
+  t=38 | nodes=  756 | Loss=0.2492 | P=0.8426 | R=0.8198 | F1=0.8311
+  t=39 | nodes= 1183 | Loss=0.2082 | P=0.5321 | R=0.7160 | F1=0.6105
+  t=40 | nodes= 1211 | Loss=0.4867 | P=0.7971 | R=0.4911 | F1=0.6077
+  t=41 | nodes= 1132 | Loss=0.7061 | P=0.7642 | R=0.6983 | F1=0.7297
+  t=42 | nodes= 2154 | Loss=0.3935 | P=0.8446 | R=0.6820 | F1=0.7546
+  t=43 | nodes= 1370 | Loss=0.3623 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=44 | nodes= 1591 | Loss=0.3282 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=45 | nodes= 1221 | Loss=0.0658 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=46 | nodes=  712 | Loss=0.0628 | P=0.0769 | R=0.5000 | F1=0.1333
+  t=47 | nodes=  846 | Loss=0.3584 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=48 | nodes=  471 | Loss=0.8713 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=49 | nodes=  476 | Loss=1.5695 | P=0.0000 | R=0.0000 | F1=0.0000
+  Aggregate t<43 | P=0.7681 | R=0.6958 | F1=0.7302
+  Aggregate t>=43 | P=0.0036 | R=0.0059 | F1=0.0045
+-----------------------------------------------------------------------------------
+GAE Node Score + Raw Features Best Classification Report on Labeled Test Graph at epoch 750:
+              precision    recall  f1-score   support
+
+     illicit       0.75      0.48      0.59      1083
+       licit       0.97      0.99      0.98     15587
+
+    accuracy                           0.96     16670
+   macro avg       0.86      0.74      0.78     16670
+weighted avg       0.95      0.96      0.95     16670
+
+[GAE Node Score + Raw Features] per-timestep illicit metrics:
+  t=35 | nodes= 1341 | Loss=0.2262 | P=0.8916 | R=0.8132 | F1=0.8506
+  t=36 | nodes= 1708 | Loss=0.0970 | P=0.6207 | R=0.5455 | F1=0.5806
+  t=37 | nodes=  498 | Loss=0.2377 | P=0.8000 | R=0.5000 | F1=0.6154
+  t=38 | nodes=  756 | Loss=0.2456 | P=0.8349 | R=0.8198 | F1=0.8273
+  t=39 | nodes= 1183 | Loss=0.1703 | P=0.8108 | R=0.7407 | F1=0.7742
+  t=40 | nodes= 1211 | Loss=0.4743 | P=0.9375 | R=0.4018 | F1=0.5625
+  t=41 | nodes= 1132 | Loss=0.6295 | P=0.9101 | R=0.6983 | F1=0.7902
+  t=42 | nodes= 2154 | Loss=0.3754 | P=0.9050 | R=0.6778 | F1=0.7751
+  t=43 | nodes= 1370 | Loss=0.2937 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=44 | nodes= 1591 | Loss=0.2824 | P=0.0909 | R=0.0417 | F1=0.0571
+  t=45 | nodes= 1221 | Loss=0.0720 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=46 | nodes=  712 | Loss=0.0342 | P=0.3333 | R=0.5000 | F1=0.4000
+  t=47 | nodes=  846 | Loss=0.3579 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=48 | nodes=  471 | Loss=0.8649 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=49 | nodes=  476 | Loss=1.2438 | P=0.0000 | R=0.0000 | F1=0.0000
+  Aggregate t<43 | P=0.8693 | R=0.6838 | F1=0.7655
+  Aggregate t>=43 | P=0.0215 | R=0.0118 | F1=0.0153
+-----------------------------------------------------------------------------------
+Local GAE Embeddings + Raw Features Best Classification Report on Labeled Test Graph at epoch 600:
+              precision    recall  f1-score   support
+
+     illicit       0.78      0.43      0.55      1083
+       licit       0.96      0.99      0.98     15587
+
+    accuracy                           0.96     16670
+   macro avg       0.87      0.71      0.76     16670
+weighted avg       0.95      0.96      0.95     16670
+
+[Local GAE Embeddings + Raw Features] per-timestep illicit metrics:
+  t=35 | nodes= 1341 | Loss=0.2340 | P=0.8758 | R=0.7747 | F1=0.8222
+  t=36 | nodes= 1708 | Loss=0.1031 | P=0.5769 | R=0.4545 | F1=0.5085
+  t=37 | nodes=  498 | Loss=0.2706 | P=0.8000 | R=0.4000 | F1=0.5333
+  t=38 | nodes=  756 | Loss=0.2666 | P=0.8854 | R=0.7658 | F1=0.8213
+  t=39 | nodes= 1183 | Loss=0.2510 | P=0.8000 | R=0.5926 | F1=0.6809
+  t=40 | nodes= 1211 | Loss=0.5715 | P=0.9706 | R=0.2946 | F1=0.4521
+  t=41 | nodes= 1132 | Loss=0.5760 | P=0.9595 | R=0.6121 | F1=0.7474
+  t=42 | nodes= 2154 | Loss=0.4442 | P=0.9200 | R=0.5774 | F1=0.7095
+  t=43 | nodes= 1370 | Loss=0.2970 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=44 | nodes= 1591 | Loss=0.2662 | P=0.1429 | R=0.0417 | F1=0.0645
+  t=45 | nodes= 1221 | Loss=0.0781 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=46 | nodes=  712 | Loss=0.0233 | P=0.3333 | R=0.5000 | F1=0.4000
+  t=47 | nodes=  846 | Loss=0.3897 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=48 | nodes=  471 | Loss=0.9226 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=49 | nodes=  476 | Loss=1.3283 | P=0.0000 | R=0.0000 | F1=0.0000
+  Aggregate t<43 | P=0.8808 | R=0.5985 | F1=0.7127
+  Aggregate t>=43 | P=0.0323 | R=0.0118 | F1=0.0173
+-----------------------------------------------------------------------------------
+Local GAE Node Score + Raw Features Best Classification Report on Labeled Test Graph at epoch 600:
+              precision    recall  f1-score   support
+
+     illicit       0.62      0.45      0.52      1083
+       licit       0.96      0.98      0.97     15587
+
+    accuracy                           0.95     16670
+   macro avg       0.79      0.71      0.74     16670
+weighted avg       0.94      0.95      0.94     16670
+
+[Local GAE Node Score + Raw Features] per-timestep illicit metrics:
+  t=35 | nodes= 1341 | Loss=0.1922 | P=0.8305 | R=0.8077 | F1=0.8189
+  t=36 | nodes= 1708 | Loss=0.1208 | P=0.3158 | R=0.5455 | F1=0.4000
+  t=37 | nodes=  498 | Loss=0.2715 | P=0.7407 | R=0.5000 | F1=0.5970
+  t=38 | nodes=  756 | Loss=0.3282 | P=0.7190 | R=0.7838 | F1=0.7500
+  t=39 | nodes= 1183 | Loss=0.2030 | P=0.7403 | R=0.7037 | F1=0.7215
+  t=40 | nodes= 1211 | Loss=0.4319 | P=0.8723 | R=0.3661 | F1=0.5157
+  t=41 | nodes= 1132 | Loss=0.5743 | P=0.6299 | R=0.6897 | F1=0.6584
+  t=42 | nodes= 2154 | Loss=0.3517 | P=0.8368 | R=0.6653 | F1=0.7413
+  t=43 | nodes= 1370 | Loss=0.2438 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=44 | nodes= 1591 | Loss=0.2573 | P=0.0667 | R=0.0417 | F1=0.0513
+  t=45 | nodes= 1221 | Loss=0.0940 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=46 | nodes=  712 | Loss=0.0394 | P=0.1667 | R=0.5000 | F1=0.2500
+  t=47 | nodes=  846 | Loss=0.3037 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=48 | nodes=  471 | Loss=0.7188 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=49 | nodes=  476 | Loss=1.1872 | P=0.0000 | R=0.0000 | F1=0.0000
+  Aggregate t<43 | P=0.7400 | R=0.6663 | F1=0.7012
+  Aggregate t>=43 | P=0.0263 | R=0.0118 | F1=0.0163
+-----------------------------------------------------------------------------------
+CoLA Embeddings + Raw Best Classification Report on Labeled Test Graph at epoch 300:
+              precision    recall  f1-score   support
+
+     illicit       0.63      0.46      0.53      1083
+       licit       0.96      0.98      0.97     15587
+
+    accuracy                           0.95     16670
+   macro avg       0.80      0.72      0.75     16670
+weighted avg       0.94      0.95      0.94     16670
+
+[CoLA Embeddings + Raw Features] per-timestep illicit metrics:
+  t=35 | nodes= 1341 | Loss=0.2057 | P=0.8765 | R=0.7802 | F1=0.8256
+  t=36 | nodes= 1708 | Loss=0.1735 | P=0.2037 | R=0.3333 | F1=0.2529
+  t=37 | nodes=  498 | Loss=0.2462 | P=0.7917 | R=0.4750 | F1=0.5937
+  t=38 | nodes=  756 | Loss=0.4143 | P=0.6471 | R=0.4955 | F1=0.5612
+  t=39 | nodes= 1183 | Loss=0.3140 | P=0.6222 | R=0.3457 | F1=0.4444
+  t=40 | nodes= 1211 | Loss=0.5522 | P=0.7778 | R=0.2500 | F1=0.3784
+  t=41 | nodes= 1132 | Loss=0.4753 | P=0.7206 | R=0.4224 | F1=0.5326
+  t=42 | nodes= 2154 | Loss=0.3619 | P=0.8483 | R=0.6318 | F1=0.7242
+  t=43 | nodes= 1370 | Loss=0.2577 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=44 | nodes= 1591 | Loss=0.2584 | P=0.0263 | R=0.0417 | F1=0.0323
+  t=45 | nodes= 1221 | Loss=0.0974 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=46 | nodes=  712 | Loss=0.0609 | P=0.1111 | R=0.5000 | F1=0.1818
+  t=47 | nodes=  846 | Loss=0.2435 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=48 | nodes=  471 | Loss=0.5602 | P=0.2500 | R=0.0278 | F1=0.0500
+  t=49 | nodes=  476 | Loss=1.1198 | P=0.0000 | R=0.0000 | F1=0.0000
+  Aggregate t<43 | P=0.7408 | R=0.5284 | F1=0.6169
+  Aggregate t>=43 | P=0.0248 | R=0.0178 | F1=0.0207
+-----------------------------------------------------------------------------------
+CoLA Node Score + Raw Features Best Classification Report on Labeled Test Graph at epoch 300:
+              precision    recall  f1-score   support
+
+     illicit       0.53      0.48      0.50      1083
+       licit       0.96      0.97      0.97     15587
+
+    accuracy                           0.94     16670
+   macro avg       0.75      0.73      0.74     16670
+weighted avg       0.94      0.94      0.94     16670
+
+[CoLA Node Score + Raw Features] per-timestep illicit metrics:
+  t=35 | nodes= 1341 | Loss=0.2696 | P=0.7437 | R=0.8132 | F1=0.7769
+  t=36 | nodes= 1708 | Loss=0.1392 | P=0.2055 | R=0.4545 | F1=0.2830
+  t=37 | nodes=  498 | Loss=0.2604 | P=0.5000 | R=0.5500 | F1=0.5238
+  t=38 | nodes=  756 | Loss=0.3718 | P=0.4915 | R=0.7838 | F1=0.6042
+  t=39 | nodes= 1183 | Loss=0.2089 | P=0.7143 | R=0.6173 | F1=0.6623
+  t=40 | nodes= 1211 | Loss=0.4145 | P=0.8140 | R=0.3125 | F1=0.4516
+  t=41 | nodes= 1132 | Loss=0.4307 | P=0.6172 | R=0.6810 | F1=0.6475
+  t=42 | nodes= 2154 | Loss=0.3082 | P=0.7961 | R=0.6862 | F1=0.7371
+  t=43 | nodes= 1370 | Loss=0.2246 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=44 | nodes= 1591 | Loss=0.2461 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=45 | nodes= 1221 | Loss=0.0946 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=46 | nodes=  712 | Loss=0.0517 | P=0.1429 | R=0.5000 | F1=0.2222
+  t=47 | nodes=  846 | Loss=0.2826 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=48 | nodes=  471 | Loss=0.5828 | P=0.0000 | R=0.0000 | F1=0.0000
+  t=49 | nodes=  476 | Loss=0.9304 | P=0.0000 | R=0.0000 | F1=0.0000
+  Aggregate t<43 | P=0.6383 | R=0.6565 | F1=0.6472
+  Aggregate t>=43 | P=0.0096 | R=0.0059 | F1=0.0073
