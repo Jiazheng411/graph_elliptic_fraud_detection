@@ -26,3 +26,4 @@ Local_GAE_Node_Score_Raw_Features,0.62,0.45,0.52
 CoLA_Embeddings_Raw,0.63,0.46,0.53
 CoLA_Node_Score_Raw_Features,0.53,0.48,0.5
 Random_Forest,0.91,0.73,0.81
+XGBoost,0.90,0.70,0.79
