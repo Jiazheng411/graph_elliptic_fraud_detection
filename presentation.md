@@ -2,6 +2,7 @@
 marp: true
 theme: default
 paginate: true
+math: katex
 style: |
   section {
     font-size: 28px;
@@ -46,17 +47,23 @@ style: |
 # Introduction & Motivation
 
 **The Problem:**
+- Criminals use complex, multi-step transactions for money laundering in Bitcoin
+- Fraud detection is challenging due to data imbalance and criminals try to obscure transaction paths
+
+**Motivation to Explore Graph Fraud Detection**
 - Bitcoin transactions form a **graph network**
-- Criminals use complex, multi-step transactions for money laundering
-- Traditional fraud detection struggles with network structure
+- GNNs can leverage both node features and network structure
+- Potential to capture money laundering chains and patterns
 
 **Our Goal:**
 Build classification models to predict **licit** vs **illicit** transactions using:
-- Node features (transaction characteristics)
+- Node features (transaction characteristics) 
 - Graph structure (network topology)
 
-**Dataset:** Elliptic dataset (MIT, IBM, Elliptic company)
+**Dataset:** Real Bitcoin data from Elliptic (MIT, IBM, Elliptic company)
 
+---
+# Dataset
 ---
 
 # Dataset Overview
@@ -67,8 +74,10 @@ Build classification models to predict **licit** vs **illicit** transactions usi
 |-----------|---------|
 | **Nodes** | 203,769 transactions |
 | **Edges** | 234,355 directed payment flows |
-| **Features** | 166 per transaction |
+| **Features** | 166 per transaction (94 local features, 72 aggregated features from 1 hop neighbors) |
 | **Labels** | '1' = Illicit, '2' = Licit, 'unknown' |
+
+Each timestep forms a graph component, there is no connection between different timesteps.
 
 **Major Challenges:**
 - Severe class imbalance
@@ -123,10 +132,13 @@ Build classification models to predict **licit** vs **illicit** transactions usi
 3. **Local isolation:** Illicit nodes have fewer immediate neighbors
 
 ![width:700px](images/largest_components.png)
-
+![width:700px](images/component_illicit.png)
+---
+# Methodology
 ---
 
-# Methodology: Temporal Split
+# Experiment Set Up
+## Train Test Split: Temporal Split
 
 **Why temporal split (not random)?**
 1. **Avoid data leakage** - random split leaks future info
@@ -139,6 +151,9 @@ Build classification models to predict **licit** vs **illicit** transactions usi
 | **Test** | 35-49 | 67,504 | 16,670 | 77,512 |
 
 **No validation set:** Limited data + time step 43 market event
+
+## Evaluation Metric
+Precision, Recall, F1 on Illicit class
 
 ---
 
@@ -160,41 +175,47 @@ Build classification models to predict **licit** vs **illicit** transactions usi
 
 # Approaches: Traditional ML
 
-**Random Forest** (Baseline from paper)
-- Ensemble of decision trees with majority voting for classification
-- 50 trees, max 50 features per split
+**Random Forest**
+- Ensemble of decision trees
 - Uses only node features (no graph structure)
-- **Results:** Precision = 0.91, Recall = 0.73, **F1 = 0.81**
 
-**XGBoost**
-- Gradient boosting: sequentially trains trees to correct previous errors
-- Optimizes: $\mathcal{L} = \sum_i l(y_i, \hat{y}_i) + \sum_k \Omega(f_k)$ (loss + regularization)
-- **Results:** [Data not in provided results]
+**XGBoost** 
+- Gradient boosting framework
+- Sequential error correction
 
-**Limitation:** Cannot leverage graph structure, but strong baseline performance
+**Results - Best Performing Models:**
+
+| Model | Precision | Recall | **F1** |
+|-------|-----------|--------|--------|
+| **Random Forest** | 0.91 | 0.73 | **0.81** |
+| **XGBoost** | 0.90 | 0.70 | **0.79** |
+
+**Key Finding:** Traditional ML achieves the highest performance, outperforming all GNN and SSL methods
 
 ---
 
 # GNN Approach 1: Graph Convolutional Network (GCN)
 
-**Core Idea:** Aggregate neighbor features via graph convolution
-
-$$\mathbf{h}_i^{(l+1)} = \sigma\left(\sum_{j \in \mathcal{N}(i) \cup \{i\}} \frac{1}{\sqrt{d_i d_j}} \mathbf{W}^{(l)} \mathbf{h}_j^{(l)}\right)$$
-
-where $\mathcal{N}(i)$ = neighbors of node $i$, $d_i$ = degree, $\mathbf{W}$ = learnable weights
+**Elliptic Benchmark Reproduction:** Our vanilla GCN mirrors the original paper setup
 
 **Architecture:**
-- 2-layer GraphConv, hidden dim = 100
-- Standard GNN baseline
+- **2-layer GraphConv** with embedding_dim = 100
+- Designed to replicate benchmark results
 
-**Training:** Labeled-only vs All nodes (with unknown)
+**Training Settings:**
+- **Optimizer:** Adam (lr=1e-3, weight decay=5e-4)
+- **Class weights:** [0.7, 0.3] to counter licit/illicit imbalance
+- **Loss:** CrossEntropyLoss with ignore_index=-1
+- **Training:** 1,500 epochs, early stopping after 20 stagnant checkpoints
+
+**Two Training Regimes:**
 
 | Training Mode | Precision | Recall | **F1** | Before t43 | After t43 |
 |---------------|-----------|--------|--------|------------|-----------|
-| Labeled only | 0.78 | 0.54 | **0.63** | 0.72 | 0.00 |
-| All nodes | 0.71 | 0.46 | **0.56** | 0.72 | 0.01 |
+| **Labeled only** | 0.78 | 0.54 | **0.63** | 0.72 | 0.00 |
+| **All nodes** | 0.71 | 0.46 | **0.56** | 0.72 | 0.01 |
 
-**Key finding:** Labeled-only training performs better than semi-supervised
+**Key Finding:** Labeled-only training outperforms semi-supervised approach
 
 ---
 
