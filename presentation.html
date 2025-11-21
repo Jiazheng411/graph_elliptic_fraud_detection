@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin Fraud Detection - CS5284 Project</title>
+
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+
+    <!-- MathJax for math rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Marked.js for markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #2c3e50;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 90vw;
+            max-width: 1200px;
+            height: 85vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .slide {
+            flex: 1;
+            padding: 60px 80px;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            font-weight: 700;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 0.3em;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin: 0.8em 0 0.4em 0;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin: 0.6em 0 0.3em 0;
+        }
+
+        p, li {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 0.5em;
+        }
+
+        ul, ol {
+            margin-left: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+            font-size: 0.9em;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr:hover {
+            background-color: #e3e7ff;
+            transition: background-color 0.2s ease;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .nav-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .slide-counter {
+            font-size: 1em;
+            color: #666;
+            font-weight: 500;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1em 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+        }
+
+        .mjx-math {
+            font-size: 1em !important;
+        }
+
+        /* Checkmarks and emoji */
+        .slide ul li::marker {
+            color: #667eea;
+        }
+
+        /* Scrollbar styling */
+        .slide::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .slide::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .slide::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        /* Center title slide content */
+        .slide.title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .slide.title-slide h1 {
+            border: none;
+            font-size: 3em;
+        }
+
+        .slide.title-slide h2 {
+            font-size: 1.5em;
+            color: #666;
+            font-weight: 400;
+        }
+
+        /* Keyboard shortcuts hint */
+        .shortcuts {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .shortcuts:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div id="slides-container"></div>
+
+        <div class="navigation">
+            <button class="nav-button" id="prev-btn" onclick="previousSlide()">← Previous</button>
+            <span class="slide-counter" id="slide-counter">1 / 1</span>
+            <button class="nav-button" id="next-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <div class="shortcuts">
+        ← → or Space: Navigate | F: Fullscreen
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        let slides = [];
+
+        // Embedded markdown content (using String.raw to preserve backslashes)
+        const markdownContent = String.raw`# Bitcoin Fraud Detection with the Elliptic Dataset
+## CS5284 Project
+
+**Team Members:** Li Jiayi, Russell Loh Chun Fa, Zhang Jiazheng
+
+---
+
+# Agenda
+
+1. **Introduction and Motivation**
+2. **Dataset Exploration and Analysis**
+   - Dataset Overview
+   - Key Data Observations
+3. **Methodology and Experiments**
+   - Train-Test Split
+   - Traditional Machine Learning Models
+   - Graph Neural Networks
+   - Self-Supervised Learning Approaches
+4. **Results and Discussion**
+   - Performance Comparison
+   - Model Analysis
+   - Temporal Evaluation
+5. **Conclusion and Future Work**
+
+---
+
+# Introduction & Motivation
+
+**The Problem:**
+- Bitcoin transactions form a **graph network**
+- Criminals use complex, multi-step transactions for money laundering
+- Traditional fraud detection struggles with network structure
+
+**Our Goal:**
+Build classification models to predict **licit** vs **illicit** transactions using:
+- Node features (transaction characteristics)
+- Graph structure (network topology)
+
+**Dataset:** Elliptic dataset (MIT, IBM, Elliptic company)
+
+---
+
+# Dataset Overview
+
+**Real Bitcoin transaction data over ~1 year (49 time steps)**
+
+| Component | Details |
+|-----------|---------|
+| **Nodes** | 203,769 transactions |
+| **Edges** | 234,355 directed payment flows |
+| **Features** | 166 per transaction |
+| **Labels** | '1' = Illicit, '2' = Licit, 'unknown' |
+
+**Major Challenges:**
+- Severe class imbalance
+- 77% unlabeled data
+- Temporal dynamics
+
+---
+
+# Key Observation 1: Class Imbalance
+
+| Class | Count | Percentage |
+|-------|-------|------------|
+| Unknown | 157,205 | **77.1%** |
+| Licit (2) | 42,019 | 20.6% |
+| Illicit (1) | 4,545 | **2.3%** |
+
+**Implications:**
+- Extreme imbalance: ~4,500 illicit vs ~42,000 licit
+- Must effectively utilize unlabeled data
+- Need careful evaluation metrics (F1-score, not just accuracy)
+
+---
+
+# Key Observation 2: Temporal Dynamics
+
+**Irregular fraud patterns across time steps:**
+- Fraud occurs in organized bursts, not steady background activity
+- **Critical event at time step 43:** Major dark market closure
+- Fundamentally changed fraud patterns post-closure
+
+![width:700px](images/temporal_fraud_patterns.png)
+
+---
+
+# Key Observation 3: Network Structure
+
+**Scale-Free Network:**
+- Most transactions have few connections
+- Few massive "hub" nodes (exchanges, large wallets)
+- Power-law degree distribution
+
+![width:700px](images/degree_distribution.png)
+
+---
+
+# Key Observation 4: Structural Differences
+
+**Licit vs Illicit Transaction Networks:**
+
+1. **Fragmentation:** Licit = dense clusters, Illicit = long chains + fragments
+2. **Money laundering chains:** Long linear paths to obfuscate source
+3. **Local isolation:** Illicit nodes have fewer immediate neighbors
+
+![width:700px](images/largest_components.png)
+
+---
+
+# Methodology: Temporal Split
+
+**Why temporal split (not random)?**
+1. **Avoid data leakage** - random split leaks future info
+2. **Real-world deployment** - models must predict future fraud
+3. **Follow original paper** (Weber et al. 2019)
+
+| Split | Time Steps | Nodes | Labeled | Edges |
+|-------|------------|-------|---------|-------|
+| **Train** | 1-34 | 136,265 | 29,894 | 156,843 |
+| **Test** | 35-49 | 67,504 | 16,670 | 77,512 |
+
+**No validation set:** Limited data + time step 43 market event
+
+---
+
+# Approaches Overview
+
+**Model Categories Explored:**
+
+| Category | Models |
+|----------|--------|
+| **Traditional ML** | Random Forest, XGBoost |
+| **Graph Neural Networks** | GCN, GraphSAGE, GAT, GATv2, Graph Transformer |
+| **Self-Supervised Learning** | BGRL+GCN, GAE+GCN, Local GAE+GCN, CoLA+GCN |
+
+**Training Scenarios:**
+- **Labeled only:** Train on ~30K labeled nodes (clean training)
+- **With unknown:** Train on full dataset (~106K nodes, semi-supervised)
+
+---
+
+# Approaches: Traditional ML
+
+**Random Forest** (Baseline from paper)
+- Ensemble of decision trees with majority voting for classification
+- 50 trees, max 50 features per split
+- Uses only node features (no graph structure)
+- **Results:** Precision = 0.91, Recall = 0.73, **F1 = 0.81**
+
+**XGBoost**
+- Gradient boosting: sequentially trains trees to correct previous errors
+- Optimizes: $\\mathcal{L} = \\sum_i l(y_i, \\hat{y}_i) + \\sum_k \\Omega(f_k)$ (loss + regularization)
+- **Results:** [Data not in provided results]
+
+**Limitation:** Cannot leverage graph structure, but strong baseline performance
+
+---
+
+# GNN Approach 1: Graph Convolutional Network (GCN)
+
+**Core Idea:** Aggregate neighbor features via graph convolution
+
+$$\\mathbf{h}_i^{(l+1)} = \\sigma\\left(\\sum_{j \\in \\mathcal{N}(i) \\cup \\{i\\}} \\frac{1}{\\sqrt{d_i d_j}} \\mathbf{W}^{(l)} \\mathbf{h}_j^{(l)}\\right)$$
+
+where $\\mathcal{N}(i)$ = neighbors of node $i$, $d_i$ = degree, $\\mathbf{W}$ = learnable weights
+
+**Architecture:**
+- 2-layer GraphConv, hidden dim = 100
+- Standard GNN baseline
+
+**Training:** Labeled-only vs All nodes (with unknown)
+
+| Training Mode | Precision | Recall | **F1** | Before t43 | After t43 |
+|---------------|-----------|--------|--------|------------|-----------|
+| Labeled only | 0.78 | 0.54 | **0.63** | 0.72 | 0.00 |
+| All nodes | 0.71 | 0.46 | **0.56** | 0.72 | 0.01 |
+
+**Key finding:** Labeled-only training performs better than semi-supervised
+
+---
+
+# GNN Approach 2: GraphSAGE (Russell)
+
+**Core Idea:** Sample fixed-size neighborhoods and aggregate with learnable functions
+
+$$\\mathbf{h}_i^{(l+1)} = \\sigma\\left(\\mathbf{W} \\cdot \\text{CONCAT}\\left(\\mathbf{h}_i^{(l)}, \\text{AGG}\\left(\\{\\mathbf{h}_j^{(l)}, j \\in \\mathcal{N}_{\\text{sample}}(i)\\}\\right)\\right)\\right)$$
+
+Samples $u$ neighbors (with replacement if needed); aggregators learn different patterns
+
+**Architecture:**
+- Sample size = 2, Multiple aggregators: Mean, MaxPool, LSTM
+- 2 layers, 500 epochs
+
+**Results:**
+
+| Aggregator | Precision | Recall | **F1** |
+|------------|-----------|--------|--------|
+| **LSTM** | 0.77 | 0.50 | **0.61** |
+| Mean | 0.55 | 0.56 | **0.55** |
+| MaxPool | 0.55 | 0.56 | **0.55** |
+
+**Key finding:** LSTM aggregator performs best, capturing sequential patterns
+
+---
+
+# GNN Approach 3: Graph Attention Networks (Jiazheng)
+
+**Core Idea:** Learn attention weights to determine neighbor importance
+
+$$\\alpha_{ij} = \\frac{\\exp(\\text{LeakyReLU}(\\mathbf{a}^T[\\mathbf{W}\\mathbf{h}_i \\| \\mathbf{W}\\mathbf{h}_j]))}{\\sum_{k \\in \\mathcal{N}(i)} \\exp(\\cdot)}, \\quad \\mathbf{h}_i' = \\sigma\\left(\\sum_{j} \\alpha_{ij} \\mathbf{W} \\mathbf{h}_j\\right)$$
+
+Multi-head attention captures different relationship aspects simultaneously
+
+---
+
+# GAT Results: Labeled Only Training
+
+**GAT Variants:**
+
+| Model | Precision | Recall | **F1** | Before t43 | After t43 |
+|-------|-----------|--------|--------|------------|-----------|
+| GAT Base | 0.58 | 0.64 | **0.61** | 0.69 | 0.01 |
+| GAT 2L (MLP) | 0.70 | 0.62 | **0.66** | 0.77 | 0.01 |
+| GAT 2L + Residual | 0.86 | 0.56 | **0.68** | 0.77 | 0.01 |
+| GAT 4L + Residual | 0.84 | 0.58 | **0.69** | 0.78 | 0.02 |
+
+**GATv2 Variants:**
+
+| Model | Precision | Recall | **F1** | Before t43 | After t43 |
+|-------|-----------|--------|--------|------------|-----------|
+| GATv2 Base | 0.54 | 0.62 | **0.57** | 0.65 | 0.00 |
+| GATv2 2L (MLP) | 0.72 | 0.63 | **0.67** | 0.76 | 0.02 |
+| GATv2 2L + Residual | 0.86 | 0.57 | **0.68** | 0.77 | 0.00 |
+| GATv2 4L + Residual | 0.78 | 0.61 | **0.69** | 0.79 | 0.02 |
+
+---
+
+# GAT Results: Training with Unknown Nodes
+
+**Semi-supervised learning (includes unlabeled nodes):**
+
+| Model | Precision | Recall | **F1** | Before t43 | After t43 |
+|-------|-----------|--------|--------|------------|-----------|
+| GAT 2L + Residual | 0.68 | 0.52 | **0.59** | 0.67 | 0.02 |
+| **GAT 4L + Residual** | 0.86 | 0.60 | **0.71** | 0.77 | 0.01 |
+| GATv2 2L + Residual | 0.85 | 0.57 | **0.68** | 0.72 | 0.02 |
+
+**Key findings:**
+- 4-layer networks generally outperform 2-layer
+- Residual connections + MLP classifier essential
+- **Best GAT:** 4L + Residual with unknown (F1 = 0.71)
+
+---
+
+# GNN Approach 4: Graph Transformer (Jiazheng)
+
+**Core Idea:** Apply transformer's scaled dot-product attention to graph structure
+
+$$\\text{Attention}(\\mathbf{Q}, \\mathbf{K}, \\mathbf{V}) = \\text{softmax}\\left(\\frac{\\mathbf{Q}\\mathbf{K}^T}{\\sqrt{d_k}}\\right)\\mathbf{V}$$
+
+where $\\mathbf{Q} = \\mathbf{W}_Q\\mathbf{h}_i$, $\\mathbf{K} = \\mathbf{W}_K\\mathbf{h}_j$, $\\mathbf{V} = \\mathbf{W}_V\\mathbf{h}_j$
+
+Separate Q/K/V projections provide more expressiveness than GAT; captures longer-range dependencies
+
+**Architecture:** Multi-head (8 heads × 16 dims), 2 layers with residuals
+
+**Results:**
+
+| Model | Precision | Recall | **F1** | Before t43 | After t43 |
+|-------|-----------|--------|--------|------------|-----------|
+| **Graph Transformer 2L** | 0.80 | 0.64 | **0.71** | 0.82 | 0.01 |
+
+**Key finding:**
+- Best overall GNN performance (F1 = 0.71)
+- Strong before market closure (F1 = 0.82)
+- Transformer architecture captures long-range dependencies effectively
+
+---
+
+# Approaches: Self-Supervised Learning
+
+**Challenge:** Only 23% of data is labeled - can we leverage unlabeled nodes?
+
+**Strategy:** Pre-train on unlabeled nodes → Fine-tune classifier on labeled nodes
+
+---
+
+# SSL Methods: Bootstrap & Contrastive Learning
+
+| Method | Explanation | F1 | Before t43 |
+|--------|-------------|-----|------------|
+| **BGRL** | Bootstrap Your Own Latent: contrastive learning without negative samples | **0.58** | 0.75 |
+| BGRL Node Score | Use BGRL scores as features | 0.58 | 0.75 |
+| **CoLA** | Contrastive multi-view learning with feature corruption | 0.53 | 0.62 |
+
+---
+
+# SSL Methods: Graph Autoencoders
+
+| Method | Explanation | F1 | Before t43 |
+|--------|-------------|-----|------------|
+| **GAE** | Reconstructs full graph adjacency matrix | 0.40 | 0.64 |
+| **GAE Node Score** | Uses GAE reconstruction error as features | **0.59** | 0.77 |
+| **Local GAE** | Reconstructs only local k-hop neighborhoods | 0.55 | 0.71 |
+
+**Key finding:** SSL methods underperform supervised GNNs (best SSL F1 = 0.59 vs GNN F1 = 0.71)
+
+**Why?** Labeled data quality > unlabeled quantity for this task
+
+---
+
+# Results: Overall Comparison
+
+| Approach | Model | Overall F1 | Before t43 | After t43 |
+|----------|-------|------------|------------|-----------|
+| **Traditional ML** | Random Forest | **0.81** | **0.90** | 0.03 |
+| **GNN** | GCN (Labeled) | 0.63 | 0.72 | 0.00 |
+| | GCN (All nodes) | 0.56 | 0.72 | 0.01 |
+| | GraphSAGE (LSTM) | 0.61 | — | — |
+| | GAT 4L + Residual | 0.69 | 0.78 | 0.02 |
+| | GAT 4L w/ Unknown | **0.71** | 0.77 | 0.01 |
+| | **Graph Transformer** | **0.71** | **0.82** | 0.01 |
+| **SSL** | BGRL + Raw | 0.58 | 0.75 | 0.01 |
+| | GAE Node Score | 0.59 | 0.77 | 0.02 |
+
+**Key insight:** Traditional ML (Random Forest) achieves highest F1, but GNNs offer better interpretability and leverage graph structure
+
+---
+
+# Key Findings: Temporal Performance Drop
+
+**Time Step 43 Market Event Impact:**
+
+| Model | F1 Before (t35-42) | F1 After (t43-49) | **Drop** |
+|-------|-------------------|-------------------|----------|
+| Random Forest | 0.90 | 0.03 | **-97%** |
+| GCN Labeled | 0.72 | 0.00 | **-100%** |
+| Graph Transformer | 0.82 | 0.01 | **-99%** |
+| GAT 4L w/ Unknown | 0.77 | 0.01 | **-99%** |
+
+**Observations:**
+- **Catastrophic performance drop** at time step 43 across ALL models
+- Dark market closure fundamentally changed fraud patterns
+- Models trained on pre-closure data cannot generalize
+- Highlights critical need for continual learning / temporal adaptation
+
+---
+
+# Conclusion & Key Takeaways
+
+**Main Contributions:**
+1. ✅ Rigorous temporal split (no data leakage)
+2. ✅ Comprehensive model comparison (Traditional ML, GNN, SSL)
+3. ✅ Deep architectural exploration (12+ model variants)
+4. ✅ Temporal analysis revealing market event impact
+
+**Best Performing Models:**
+- **Traditional ML:** Random Forest (F1 = 0.81, Before closure = 0.90)
+- **GNN:** Graph Transformer (F1 = 0.71, Before closure = 0.82)
+- **Best with Unknown nodes:** GAT 4L (F1 = 0.71, leverages unlabeled data)
+
+**Major Challenge:**
+- All models fail catastrophically after market regime change (t=43)
+- Pre-event F1 ~0.70-0.90 → Post-event F1 ~0.00-0.03
+
+---
+
+# Future Work
+
+1. **Temporal Adaptation:**
+   - Continual learning approaches
+   - Online model updates
+   - Transfer learning across market regimes
+
+2. **Advanced Architectures:**
+   - Larger-scale Graph Transformers
+   - Temporal GNNs (recurrent architectures)
+   - Explainable AI for fraud detection
+
+3. **Data Utilization:**
+   - Better SSL methods for unlabeled data
+   - Active learning for selective labeling
+   - Multi-task learning with auxiliary tasks
+
+---
+
+# Questions?
+
+**Thank you!**
+
+**Team:** Li Jiayi, Russell Loh Chun Fa, Zhang Jiazheng
+
+**Project:** Bitcoin Fraud Detection with Graph Neural Networks
+
+---
+
+# Backup: Technical Details
+
+**Training Hyperparameters (GAT):**
+- Hidden dim: 128, Heads: 8
+- Dropout: 0.1 (feature, attention, residual)
+- Optimizer: Adam (lr=1e-3, weight decay=5e-4)
+- Loss: Cross-entropy with class weights [0.7, 0.3]
+- Epochs: 1,000 (eval every 100)
+
+**GraphSAGE Configuration:**
+- 2 layers, Hidden dim: 128
+- Aggregators: Mean, MaxPool, LSTM
+- Neighbor sampling: u ∈ {1,2,3}
+- Training epochs: 500`;
+
+        // Load presentation from embedded content
+        function loadPresentation() {
+            // Split by slide delimiter (---)
+            const slideContents = markdownContent.split(/\n---\n/);
+
+            const slidesContainer = document.getElementById('slides-container');
+
+            slideContents.forEach((content, index) => {
+                const slideDiv = document.createElement('div');
+                slideDiv.className = 'slide';
+
+                // Add title-slide class to first slide
+                if (index === 0) {
+                    slideDiv.classList.add('title-slide');
+                }
+
+                // Parse markdown to HTML
+                slideDiv.innerHTML = marked.parse(content);
+
+                slidesContainer.appendChild(slideDiv);
+                slides.push(slideDiv);
+            });
+
+            // Show first slide
+            showSlide(0);
+
+            // Trigger MathJax rendering after a short delay to ensure DOM is ready
+            setTimeout(() => {
+                if (window.MathJax) {
+                    MathJax.typesetPromise().catch((err) => console.log('MathJax error:', err));
+                }
+            }, 100);
+        }
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+
+            currentSlide = index;
+            updateNavigation();
+
+            // Trigger MathJax rendering for new slide
+            setTimeout(() => {
+                if (window.MathJax) {
+                    MathJax.typesetPromise([slides[index]]).catch((err) => console.log('MathJax error:', err));
+                }
+            }, 50);
+        }
+
+        function updateNavigation() {
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === slides.length - 1;
+            document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${slides.length}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'f' || e.key === 'F') {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+        });
+
+        // Load presentation on page load
+        window.addEventListener('load', loadPresentation);
+    </script>
+</body>
+</html>
