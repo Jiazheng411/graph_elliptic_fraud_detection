@@ -133,6 +133,7 @@ Each timestep forms a graph component, there is no connection between different 
 
 ![width:700px](images/largest_components.png)
 ![width:700px](images/component_illicit.png)
+
 ---
 # Methodology
 ---
@@ -185,10 +186,10 @@ Precision, Recall, F1 on Illicit class
 
 **Results - Best Performing Models:**
 
-| Model | Precision | Recall | **F1** |
-|-------|-----------|--------|--------|
-| **Random Forest** | 0.91 | 0.73 | **0.81** |
-| **XGBoost** | 0.90 | 0.70 | **0.79** |
+| Model | Precision | Recall | **F1** |Before t43 | After t43 |
+|-------|-----------|--------|--------|--------|--------|
+| **Random Forest** | 0.91 | 0.73 | **0.81** |0.9016|0.029|
+| **XGBoost** | 0.90 | 0.70 | **0.79** |0.87|0.05|
 
 **Key Finding:** Traditional ML achieves the highest performance, outperforming all GNN and SSL methods
 
@@ -219,7 +220,7 @@ Precision, Recall, F1 on Illicit class
 
 ---
 
-# GNN Approach 2: GraphSAGE (Russell)
+# GNN Approach 2: GraphSAGE
 
 **Core Idea:** Sample fixed-size neighborhoods and aggregate with learnable functions
 
@@ -233,29 +234,40 @@ Samples $u$ neighbors (with replacement if needed); aggregators learn different 
 
 **Results:**
 
-| Aggregator | Precision | Recall | **F1** |
-|------------|-----------|--------|--------|
-| **LSTM** | 0.77 | 0.50 | **0.61** |
-| Mean | 0.55 | 0.56 | **0.55** |
-| MaxPool | 0.55 | 0.56 | **0.55** |
+| Aggregator | Precision | Recall | **F1** | Before t43 | After t43 |
+|------------|-----------|--------|--------|------------|-----------|
+| **LSTM** | 0.77 | 0.50 | **0.61** | 0.70 | 0.08 |
+| Mean | 0.55 | 0.56 | **0.55** | 0.65 | 0.12 |
+| MaxPool | 0.55 | 0.56 | **0.55** | 0.63 | 0.05 |
 
-**Key finding:** LSTM aggregator performs best, capturing sequential patterns
+**Key findings:** 
+- LSTM aggregator performs best overall (F1 = 0.61)
+- All variants show strong pre-closure performance (0.63-0.70)
+- Mean aggregator shows highest post-closure resilience (0.12)
 
 ---
 
-# GNN Approach 3: Graph Attention Networks (Jiazheng)
+# GNN Approach 3: Graph Attention Networks (GAT)
 
 **Core Idea:** Learn attention weights to determine neighbor importance
+- Adaptive neighbor weighting instead of fixed aggregation
+- Multi-head attention captures different relationship aspects
 
-$$\alpha_{ij} = \frac{\exp(\text{LeakyReLU}(\mathbf{a}^T[\mathbf{W}\mathbf{h}_i \| \mathbf{W}\mathbf{h}_j]))}{\sum_{k \in \mathcal{N}(i)} \exp(\cdot)}, \quad \mathbf{h}_i' = \sigma\left(\sum_{j} \alpha_{ij} \mathbf{W} \mathbf{h}_j\right)$$
+**GAT vs GATv2:**
+- **GAT (v1):** Original attention mechanism with shared weight matrix
+- **GATv2:** Improved version with dynamic attention computation
+- **Key difference:** GATv2 applies attention after weight transformation for better expressiveness
 
-Multi-head attention captures different relationship aspects simultaneously
+**Architecture Variants Tested:**
+- Base models, 2-layer, 4-layer configurations
+- With/without residual connections and MLP classifiers
+- Both labeled-only and semi-supervised training
 
 ---
 
-# GAT Results: Labeled Only Training
+# GAT Results: Comprehensive Comparison
 
-**GAT Variants:**
+**Labeled-Only Training:**
 
 | Model | Precision | Recall | **F1** | Before t43 | After t43 |
 |-------|-----------|--------|--------|------------|-----------|
@@ -263,21 +275,12 @@ Multi-head attention captures different relationship aspects simultaneously
 | GAT 2L (MLP) | 0.70 | 0.62 | **0.66** | 0.77 | 0.01 |
 | GAT 2L + Residual | 0.86 | 0.56 | **0.68** | 0.77 | 0.01 |
 | GAT 4L + Residual | 0.84 | 0.58 | **0.69** | 0.78 | 0.02 |
-
-**GATv2 Variants:**
-
-| Model | Precision | Recall | **F1** | Before t43 | After t43 |
-|-------|-----------|--------|--------|------------|-----------|
 | GATv2 Base | 0.54 | 0.62 | **0.57** | 0.65 | 0.00 |
 | GATv2 2L (MLP) | 0.72 | 0.63 | **0.67** | 0.76 | 0.02 |
 | GATv2 2L + Residual | 0.86 | 0.57 | **0.68** | 0.77 | 0.00 |
 | GATv2 4L + Residual | 0.78 | 0.61 | **0.69** | 0.79 | 0.02 |
 
----
-
-# GAT Results: Training with Unknown Nodes
-
-**Semi-supervised learning (includes unlabeled nodes):**
+**Semi-Supervised Training (with Unknown):**
 
 | Model | Precision | Recall | **F1** | Before t43 | After t43 |
 |-------|-----------|--------|--------|------------|-----------|
@@ -285,14 +288,30 @@ Multi-head attention captures different relationship aspects simultaneously
 | **GAT 4L + Residual** | 0.86 | 0.60 | **0.71** | 0.77 | 0.01 |
 | GATv2 2L + Residual | 0.85 | 0.57 | **0.68** | 0.72 | 0.02 |
 
-**Key findings:**
-- 4-layer networks generally outperform 2-layer
-- Residual connections + MLP classifier essential
-- **Best GAT:** 4L + Residual with unknown (F1 = 0.71)
+---
+
+# GAT Analysis: Key Observations
+
+**GAT vs GATv2 Performance:**
+- **GAT slightly outperforms GATv2** in most configurations
+- Both show similar patterns across architectural choices
+- **Best overall:** GAT 4L + Residual (semi-supervised) = F1 0.71
+
+**Architectural Insights:**
+- **4-layer > 2-layer:** Deeper networks capture more complex patterns
+- **Residual connections:** Essential for preventing degradation in deeper networks
+- **MLP classifier:** Better than linear head for final classification
+
+**Training Strategy Comparison:**
+- **Semi-supervised wins:** Including unknown nodes improves best model (0.69 → 0.71)
+- **But mixed results:** Some models perform worse with unknowns (label noise effect)
+- **Trade-off:** More data vs potential noise from unlabeled nodes
+
+**Temporal Robustness:** All models collapse after t43 (dark market closure)
 
 ---
 
-# GNN Approach 4: Graph Transformer (Jiazheng)
+# GNN Approach 4: Graph Transformer
 
 **Core Idea:** Apply transformer's scaled dot-product attention to graph structure
 
@@ -319,51 +338,102 @@ Separate Q/K/V projections provide more expressiveness than GAT; captures longer
 
 # Approaches: Self-Supervised Learning
 
-**Challenge:** Only 23% of data is labeled - can we leverage unlabeled nodes?
+**Challenge:** Only 23% of data is labeled (77% unlabeled) - can we leverage unlabeled nodes?
 
-**Strategy:** Pre-train on unlabeled nodes → Fine-tune classifier on labeled nodes
+**Strategy:** Pre-train on full graph → Transfer knowledge to supervised classifier
 
----
+**Methods Explored:**
 
-# SSL Methods: Bootstrap & Contrastive Learning
+| Method | Core Idea | Architecture |
+|--------|-----------|-------------|
+| **BGRL** (Bootstrapped Graph Latents) | Uses interacting online/target encoders with augmentation | Momentum-based contrastive learning |
+| **Graph Autoencoder (GAE)** | Reconstruction-based anomaly detection | Global and Local subgraph variants |
+| **CoLA** (Contrastive Learning for Anomalies) | Maximizes agreement between target nodes and their local subgraphs | Contrastive discrimination |
 
-| Method | Explanation | F1 | Before t43 |
-|--------|-------------|-----|------------|
-| **BGRL** | Bootstrap Your Own Latent: contrastive learning without negative samples | **0.58** | 0.75 |
-| BGRL Node Score | Use BGRL scores as features | 0.58 | 0.75 |
-| **CoLA** | Contrastive multi-view learning with feature corruption | 0.53 | 0.62 |
-
----
-
-# SSL Methods: Graph Autoencoders
-
-| Method | Explanation | F1 | Before t43 |
-|--------|-------------|-----|------------|
-| **GAE** | Reconstructs full graph adjacency matrix | 0.40 | 0.64 |
-| **GAE Node Score** | Uses GAE reconstruction error as features | **0.59** | 0.77 |
-| **Local GAE** | Reconstructs only local k-hop neighborhoods | 0.55 | 0.71 |
-
-**Key finding:** SSL methods underperform supervised GNNs (best SSL F1 = 0.59 vs GNN F1 = 0.71)
-
-**Why?** Labeled data quality > unlabeled quantity for this task
+**Transfer Strategies:** Embeddings concatenation, Node anomaly scores
 
 ---
 
-# Results: Overall Comparison
+# SSL Results: Comprehensive Comparison
 
-| Approach | Model | Overall F1 | Before t43 | After t43 |
-|----------|-------|------------|------------|-----------|
-| **Traditional ML** | Random Forest | **0.81** | **0.90** | 0.03 |
-| **GNN** | GCN (Labeled) | 0.63 | 0.72 | 0.00 |
-| | GCN (All nodes) | 0.56 | 0.72 | 0.01 |
-| | GraphSAGE (LSTM) | 0.61 | — | — |
-| | GAT 4L + Residual | 0.69 | 0.78 | 0.02 |
-| | GAT 4L w/ Unknown | **0.71** | 0.77 | 0.01 |
-| | **Graph Transformer** | **0.71** | **0.82** | 0.01 |
-| **SSL** | BGRL + Raw | 0.58 | 0.75 | 0.01 |
-| | GAE Node Score | 0.59 | 0.77 | 0.02 |
+**All SSL Variants vs GCN Baseline:**
 
-**Key insight:** Traditional ML (Random Forest) achieves highest F1, but GNNs offer better interpretability and leverage graph structure
+| Method | Variant | Precision | Recall | **F1** | Before t43 | After t43 |
+|--------|---------|-----------|--------|--------|------------|-----------|
+| **GCN Baseline** | Labeled only | 0.78 | 0.54 | **0.63** | **0.72** | 0.00 |
+| **BGRL** | Embeddings + Raw | 0.78 | 0.46 | **0.58** | **0.75** | 0.01 |
+| | Node Score + Raw | 0.68 | 0.50 | **0.58** | **0.75** | 0.01 |
+| **GAE** | Embeddings Only | 0.46 | 0.36 | **0.40** | **0.64** | 0.04 |
+| | Raw + Embeddings | 0.64 | 0.50 | **0.56** | **0.73** | 0.00 |
+| | Node Score + Raw | 0.75 | 0.48 | **0.59** | **0.77** | 0.02 |
+| **Local GAE** | Embeddings + Raw | 0.78 | 0.43 | **0.55** | **0.71** | 0.02 |
+| | Node Score + Raw | 0.62 | 0.45 | **0.52** | **0.70** | 0.02 |
+| **CoLA** | Embeddings + Raw | 0.63 | 0.46 | **0.53** | **0.62** | 0.02 |
+| | Node Score + Raw | 0.53 | 0.48 | **0.50** | **0.65** | 0.01 |
+
+**Best SSL:** GAE Node Score (F1 = 0.59, Before t43 = 0.77) vs **GCN Baseline (F1 = 0.63, Before t43 = 0.72)**
+
+---
+
+# SSL Analysis: Findings and Conclusions
+
+**Performance Patterns:**
+- **Improved Recall:** SSL methods generally increased recall (0.43-0.50) vs precision (0.46-0.78)
+- **Underperformed Baseline:** None outperformed the purely supervised GCN baseline (F1 = 0.63)
+- **Node Scores > Embeddings:** Anomaly scores consistently outperformed embedding concatenation
+
+**Key Insights:**
+1. **Best SSL Strategy:** GAE reconstruction error as anomaly features (F1 = 0.59, Before t43 = 0.77)
+2. **Local vs Global:** Local subgraph methods sacrifice too much global context
+3. **Contrastive Learning:** BGRL (0.58) > CoLA (0.53) for this task
+
+**Critical Finding:**
+Generic reconstruction tasks may **smooth embeddings too much**, blurring the sharp decision boundaries needed for rare illicit nodes
+
+**Conclusion:** 
+Generic reconstruction tasks may smooth embeddings too much, blurring the sharp decision boundaries needed for rare illicit nodes. For Bitcoin fraud detection, **supervised learning with labeled data** provides clearer discriminative signals than self-supervised graph reconstruction methods
+
+---
+# Result
+---
+
+# Overall Comparison
+
+![f1_compare](images/models_f1_comparison.png)
+
+---
+# Overall Compareison
+| Approach | Model | With/Without Unknown | Overall F1 | Before t43 | After t43 |
+|----------|-------|---------------------|------------|------------|-----------|
+| **Traditional ML** | Random Forest | Without | **0.81** | **0.90** | 0.03 |
+| | XGBoost | Without | **0.79** | **0.87** | 0.00 |
+| **GNN** | GCN (Labeled) | Without | 0.63 | 0.72 | 0.00 |
+| | GraphSAGE (LSTM) | Without | 0.61 | 0.70 | 0.08 |
+| | GAT 4L + Residual | **With Unknown** | **0.71** | 0.77 | 0.01 |
+| | GATv2 4L + Residual | Without | 0.69 | 0.79 | 0.02 |
+| | **Graph Transformer 2L** | Without | **0.71** | **0.82** | 0.01 |
+| **SSL** | BGRL (Best) | Without | 0.58 | 0.75 | 0.01 |
+| | GAE (Node Score) | Without | **0.59** | **0.77** | 0.02 |
+| | Local GAE (Embeddings) | Without | 0.55 | 0.71 | 0.02 |
+| | CoLA (Embeddings) | Without | 0.53 | 0.62 | 0.02 |
+
+---
+# Key Insights: Why Traditional ML Wins
+
+**Performance Hierarchy:**
+- **Traditional ML (Random Forest):** F1 = 0.81 (highest overall)
+- **Graph Transformer:** F1 = 0.71 (best GNN, strong pre-closure = 0.82)  
+- **GAT 4L + Unknown:** F1 = 0.71 (marginal benefit from unknowns: 0.69 → 0.71)
+- **Other GNNs:** F1 = 0.55-0.69 (diminishing returns)
+
+**Why GNNs Underperform: Structural Limitations**
+1. **Pre-aggregated features:** 72/166 features already capture 1-hop neighbor information, this implies the handcrafted features are powerful
+2. **Graph destruction:** Unknown node removal breaks connectivity (77% unknowns)
+3. **Unknown label noise:** 77% unlabeled data introduces training instability  
+4. **Missing edge features:** Node-only information limits relational learning
+5. **Temporal isolation:** Disconnected timesteps prevent fraud pattern evolution modeling
+6. **Sparse connectivity:** Low average degree (~2.3) limits message passing effectiveness
+7. **Over-smoothing risk:** Multiple layers blur rare fraud signal boundaries
 
 ---
 
@@ -371,12 +441,8 @@ Separate Q/K/V projections provide more expressiveness than GAT; captures longer
 
 **Time Step 43 Market Event Impact:**
 
-| Model | F1 Before (t35-42) | F1 After (t43-49) | **Drop** |
-|-------|-------------------|-------------------|----------|
-| Random Forest | 0.90 | 0.03 | **-97%** |
-| GCN Labeled | 0.72 | 0.00 | **-100%** |
-| Graph Transformer | 0.82 | 0.01 | **-99%** |
-| GAT 4L w/ Unknown | 0.77 | 0.01 | **-99%** |
+![width:800px](images/time_eval.png)
+![width:800px](images/F1_b4_aft.png)
 
 **Observations:**
 - **Catastrophic performance drop** at time step 43 across ALL models
@@ -389,63 +455,50 @@ Separate Q/K/V projections provide more expressiveness than GAT; captures longer
 # Conclusion & Key Takeaways
 
 **Main Contributions:**
-1. ✅ Rigorous temporal split (no data leakage)
-2. ✅ Comprehensive model comparison (Traditional ML, GNN, SSL)
-3. ✅ Deep architectural exploration (12+ model variants)
-4. ✅ Temporal analysis revealing market event impact
+1. ✅ Rigorous temporal split preventing data leakage
+2. ✅ Comprehensive comparison across Traditional ML, GNN, and SSL approaches
+3. ✅ Deep architectural exploration with 15+ model variants
+4. ✅ Temporal analysis revealing catastrophic failure patterns
 
-**Best Performing Models:**
-- **Traditional ML:** Random Forest (F1 = 0.81, Before closure = 0.90)
-- **GNN:** Graph Transformer (F1 = 0.71, Before closure = 0.82)
-- **Best with Unknown nodes:** GAT 4L (F1 = 0.71, leverages unlabeled data)
+**Key Technical Findings:**
+- **Feature engineering dominates:** Hand-crafted features (166D) capture fraud signals better than graph propagation
+- **Attention mechanisms matter:** Adaptive neighbor weighting outperforms fixed aggregation schemes
+- **SSL objectives misalign:** Generic reconstruction tasks don't capture fraud-specific decision boundaries
+- **Graph structure helps selectively:** Benefits emerge only with sophisticated attention and residual connections
 
-**Major Challenge:**
-- All models fail catastrophically after market regime change (t=43)
-- Pre-event F1 ~0.70-0.90 → Post-event F1 ~0.00-0.03
+**Critical Challenge - Temporal Robustness:**
+- **Universal failure:** All models collapse after market regime change (97-100% performance drop)
+- **Distribution shift vulnerability:** Static models cannot adapt to evolving fraud patterns
+- **Label sparsity:** Post-closure fraud becomes too rare for reliable evaluation
 
 ---
 
 # Future Work
 
-1. **Temporal Adaptation:**
-   - Continual learning approaches
-   - Online model updates
-   - Transfer learning across market regimes
+**1. Temporal Adaptation & Robustness:**
+- **Streaming graph models:** TGAT, TGN for explicit time encoding
+- **Drift detection:** Online model updates with distribution shift monitoring
+- **Continual learning:** Adapt to evolving fraud patterns without catastrophic forgetting
 
-2. **Advanced Architectures:**
-   - Larger-scale Graph Transformers
-   - Temporal GNNs (recurrent architectures)
-   - Explainable AI for fraud detection
+**2. Fraud-Specific SSL Objectives:**
+- **Targeted pretraining:** Fraud-aware subgraph contrast, edge anomaly scoring
+- **Masked graph autoencoders:** GraphMAE for better fraud signal preservation
+- **Sharp decision boundaries:** SSL objectives aligned with rare anomaly detection
 
-3. **Data Utilization:**
-   - Better SSL methods for unlabeled data
-   - Active learning for selective labeling
-   - Multi-task learning with auxiliary tasks
+**3. Enhanced Graph Representations:**
+- **Heterogeneous modeling:** Exchanges, mixers, smart contracts as distinct node types; Add edge features for better representation
+- **Higher-order features:** Multi-hop flow patterns, temporal transaction chains
+- **Domain adaptation:** Mitigate covariate shift across market regimes
+
+**4. Practical Deployment Considerations:**
+- **Active learning:** Selective labeling for post-shift scarce labels
+- **Model recalibration:** Maintain prediction confidence under distribution changes
+- **Real-time adaptation:** Online learning for dynamic financial markets
 
 ---
 
-# Questions?
-
-**Thank you!**
+# Thank You!
 
 **Team:** Li Jiayi, Russell Loh Chun Fa, Zhang Jiazheng
 
 **Project:** Bitcoin Fraud Detection with Graph Neural Networks
-
----
-
-# Backup: Technical Details
-
-**Training Hyperparameters (GAT):**
-- Hidden dim: 128, Heads: 8
-- Dropout: 0.1 (feature, attention, residual)
-- Optimizer: Adam (lr=1e-3, weight decay=5e-4)
-- Loss: Cross-entropy with class weights [0.7, 0.3]
-- Epochs: 1,000 (eval every 100)
-
-**GraphSAGE Configuration:**
-- 2 layers, Hidden dim: 128
-- Aggregators: Mean, MaxPool, LSTM
-- Neighbor sampling: u ∈ {1,2,3}
-- Training epochs: 500
-
