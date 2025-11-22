@@ -1,14 +1,24 @@
 ---
 marp: true
 theme: default
+class: center, middle
 paginate: true
 math: katex
+backgroundImage: url('./background.png')
 style: |
   section {
-    font-size: 28px;
+    font-size: 22px;
   }
   h1 {
     color: #2c3e50;
+    /* Thickness, Style, Color */
+    border-bottom: 3px solid #2980b9;
+    
+    /* Space between text and line */
+    padding-bottom: 15px; 
+    
+    /* Optional: Make sure it fits nicely */
+    margin-bottom: 20px;
   }
   h2 {
     color: #3498db;
@@ -16,12 +26,50 @@ style: |
   table {
     font-size: 20px;
   }
+  th {
+    background-color: #e1f5fe; /* Light Blue */
+    color: #000; /* Force text to black so it's readable */
+  }
+
+
+  
+
+  
 ---
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+table {
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 20px;
+    th, td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    line-height: 1.2em; /* Tighten text spacing */
+  }
+}
+.container{
+  display:flex;
+}
+.col{
+  flex:1;
+}
+</style>
+
+<div style="text-align: center;">
 
 # Bitcoin Fraud Detection with the Elliptic Dataset
 ## CS5284 Project
 
 **Team Members:** Li Jiayi, Russell Loh Chun Fa, Zhang Jiazheng
+
+
+</div>
+
+
 
 ---
 
@@ -37,9 +85,9 @@ style: |
    - Graph Neural Networks
    - Self-Supervised Learning Approaches
 4. **Results and Discussion**
-   - Performance Comparison
+   <!-- - Performance Comparison
    - Model Analysis
-   - Temporal Evaluation
+   - Temporal Evaluation -->
 5. **Conclusion and Future Work**
 
 ---
@@ -56,14 +104,18 @@ style: |
 - Potential to capture money laundering chains and patterns
 
 **Our Goal:**
-Build classification models to predict **licit** vs **illicit** transactions using:
+Build classification models to predict **licit** vs **illicit** transactions using Real Bitcoin data from Elliptic (MIT, IBM, Elliptic), leveraging:
 - Node features (transaction characteristics) 
 - Graph structure (network topology)
 
-**Dataset:** Real Bitcoin data from Elliptic (MIT, IBM, Elliptic company)
 
 ---
+<div style="text-align: center;">
+
 # Dataset
+
+</div>
+
 ---
 
 # Dataset Overview
@@ -108,7 +160,7 @@ Each timestep forms a graph component, there is no connection between different 
 - **Critical event at time step 43:** Major dark market closure
 - Fundamentally changed fraud patterns post-closure
 
-![width:700px](images/temporal_fraud_patterns.png)
+![width:700px center ](images/temporal_fraud_patterns.png)
 
 ---
 
@@ -119,7 +171,7 @@ Each timestep forms a graph component, there is no connection between different 
 - Few massive "hub" nodes (exchanges, large wallets)
 - Power-law degree distribution
 
-![width:700px](images/degree_distribution.png)
+![width:500px center](images/degree_distribution.png)
 
 ---
 
@@ -131,20 +183,23 @@ Each timestep forms a graph component, there is no connection between different 
 2. **Money laundering chains:** Long linear paths to obfuscate source
 3. **Local isolation:** Illicit nodes have fewer immediate neighbors
 
-![width:700px](images/largest_components.png)
-![width:700px](images/component_illicit.png)
+![width:700px center](images/largest_components.png)
 
 ---
+<div style="text-align: center;">
+
 # Methodology
+</div>
+
 ---
 
 # Experiment Set Up
 ## Train Test Split: Temporal Split
 
-**Why temporal split (not random)?**
 1. **Avoid data leakage** - random split leaks future info
 2. **Real-world deployment** - models must predict future fraud
 3. **Follow original paper** (Weber et al. 2019)
+
 
 | Split | Time Steps | Nodes | Labeled | Edges |
 |-------|------------|-------|---------|-------|
@@ -160,7 +215,7 @@ Precision, Recall, F1 on Illicit class
 
 # Approaches Overview
 
-**Model Categories Explored:**
+## Model Categories Explored
 
 | Category | Models |
 |----------|--------|
@@ -168,7 +223,7 @@ Precision, Recall, F1 on Illicit class
 | **Graph Neural Networks** | GCN, GraphSAGE, GAT, GATv2, Graph Transformer |
 | **Self-Supervised Learning** | BGRL+GCN, GAE+GCN, Local GAE+GCN, CoLA+GCN |
 
-**Training Scenarios:**
+## Training Scenarios
 - **Labeled only:** Train on ~30K labeled nodes (clean training)
 - **With unknown:** Train on full dataset (~106K nodes, semi-supervised)
 
@@ -176,13 +231,15 @@ Precision, Recall, F1 on Illicit class
 
 # Approaches: Traditional ML
 
+**XGBoost** 
+- Gradient boosting framework
+- Sequential error correction
+
+
 **Random Forest**
 - Ensemble of decision trees
 - Uses only node features (no graph structure)
 
-**XGBoost** 
-- Gradient boosting framework
-- Sequential error correction
 
 **Results - Best Performing Models:**
 
@@ -199,14 +256,12 @@ Precision, Recall, F1 on Illicit class
 
 **Elliptic Benchmark Reproduction:** Our vanilla GCN mirrors the original paper setup
 
-**Architecture:**
-- **2-layer GraphConv** with embedding_dim = 100
-- Designed to replicate benchmark results
+**Architecture:** **2-layer GraphConv** with embedding_dim = 100 Designed to replicate benchmark results
+
 
 **Training Settings:**
 - **Optimizer:** Adam (lr=1e-3, weight decay=5e-4)
-- **Class weights:** [0.7, 0.3] to counter licit/illicit imbalance
-- **Loss:** CrossEntropyLoss with ignore_index=-1
+- **Class weights & Loss:** CrossEntropy Loss with [0.7, 0.3] weigtht to counter licit/illicit imbalance
 - **Training:** 1,500 epochs, early stopping after 20 stagnant checkpoints
 
 **Two Training Regimes:**
@@ -222,15 +277,14 @@ Precision, Recall, F1 on Illicit class
 
 # GNN Approach 2: GraphSAGE
 
-**Core Idea:** Sample fixed-size neighborhoods and aggregate with learnable functions
+**Core Idea:** Sample fixed-size neighborhoods and aggregate with learnable functions; Samples $u$ neighbors (with replacement if needed); aggregators learn different patterns
+<!-- 
+$$\mathbf{h}_i^{(l+1)} = \sigma\left(\mathbf{W} \cdot \text{CONCAT}\left(\mathbf{h}_i^{(l)}, \text{AGG}\left(\{\mathbf{h}_j^{(l)}, j \in \mathcal{N}_{\text{sample}}(i)\}\right)\right)\right)$$ -->
 
-$$\mathbf{h}_i^{(l+1)} = \sigma\left(\mathbf{W} \cdot \text{CONCAT}\left(\mathbf{h}_i^{(l)}, \text{AGG}\left(\{\mathbf{h}_j^{(l)}, j \in \mathcal{N}_{\text{sample}}(i)\}\right)\right)\right)$$
 
-Samples $u$ neighbors (with replacement if needed); aggregators learn different patterns
 
-**Architecture:**
-- Sample size = 2, Multiple aggregators: Mean, MaxPool, LSTM
-- 2 layers, 500 epochs
+**Architecture & Training Set ups:**
+- Sample size = 2, Multiple aggregators: Mean, MaxPool, LSTM; 2 layers, 500 epochs
 
 **Results:**
 
@@ -241,9 +295,8 @@ Samples $u$ neighbors (with replacement if needed); aggregators learn different 
 | MaxPool | 0.55 | 0.56 | **0.55** | 0.63 | 0.05 |
 
 **Key findings:** 
-- LSTM aggregator performs best overall (F1 = 0.61)
-- All variants show strong pre-closure performance (0.63-0.70)
-- Mean aggregator shows highest post-closure resilience (0.12)
+- Did not observe improvement compared to GCN
+- LSTM aggregator performs best overall (F1 = 0.61); Mean aggregator shows highest post-closure resilience
 
 ---
 
@@ -267,34 +320,26 @@ Samples $u$ neighbors (with replacement if needed); aggregators learn different 
 
 # GAT Results: Comprehensive Comparison
 
-**Labeled-Only Training:**
-
-| Model | Precision | Recall | **F1** | Before t43 | After t43 |
-|-------|-----------|--------|--------|------------|-----------|
-| GAT Base | 0.58 | 0.64 | **0.61** | 0.69 | 0.01 |
-| GAT 2L (MLP) | 0.70 | 0.62 | **0.66** | 0.77 | 0.01 |
-| GAT 2L + Residual | 0.86 | 0.56 | **0.68** | 0.77 | 0.01 |
-| GAT 4L + Residual | 0.84 | 0.58 | **0.69** | 0.78 | 0.02 |
-| GATv2 Base | 0.54 | 0.62 | **0.57** | 0.65 | 0.00 |
-| GATv2 2L (MLP) | 0.72 | 0.63 | **0.67** | 0.76 | 0.02 |
-| GATv2 2L + Residual | 0.86 | 0.57 | **0.68** | 0.77 | 0.00 |
-| GATv2 4L + Residual | 0.78 | 0.61 | **0.69** | 0.79 | 0.02 |
-
-**Semi-Supervised Training (with Unknown):**
-
-| Model | Precision | Recall | **F1** | Before t43 | After t43 |
-|-------|-----------|--------|--------|------------|-----------|
-| GAT 2L + Residual | 0.68 | 0.52 | **0.59** | 0.67 | 0.02 |
-| **GAT 4L + Residual** | 0.86 | 0.60 | **0.71** | 0.77 | 0.01 |
-| GATv2 2L + Residual | 0.85 | 0.57 | **0.68** | 0.72 | 0.02 |
+| Model | With/Without Unknown | Precision | Recall | **F1** | Before t43 | After t43 |
+|-------|---------------------|-----------|--------|--------|------------|-----------|
+| GAT Base | Without | 0.58 | 0.64 | **0.61** | 0.69 | 0.01 |
+| GAT 2L (MLP) | Without | 0.70 | 0.62 | **0.66** | 0.77 | 0.01 |
+| GAT 2L + Residual | Without | 0.86 | 0.56 | **0.68** | 0.77 | 0.01 |
+| **GAT 4L + Residual** | **Without** | **0.84** | **0.58** | **0.69** | **0.78** | **0.02** |
+| GATv2 Base | Without | 0.54 | 0.62 | **0.57** | 0.65 | 0.00 |
+| GATv2 2L (MLP) | Without | 0.72 | 0.63 | **0.67** | 0.76 | 0.02 |
+| GATv2 2L + Residual | Without | 0.86 | 0.57 | **0.68** | 0.77 | 0.00 |
+| **GATv2 4L + Residual** | **Without** | **0.78** | **0.61** | **0.69** | **0.79** | **0.02** |
+| GAT 2L + Residual | With Unknown | 0.68 | 0.52 | **0.59** | 0.67 | 0.02 |
+| **GAT 4L + Residual** | **With Unknown** | **0.86** | **0.60** | **0.71** | **0.77** | **0.01** |
+| GATv2 2L + Residual | With Unknown | 0.85 | 0.57 | **0.68** | 0.72 | 0.02 |
 
 ---
 
 # GAT Analysis: Key Observations
 
 **GAT vs GATv2 Performance:**
-- **GAT slightly outperforms GATv2** in most configurations
-- Both show similar patterns across architectural choices
+- **GAT slightly outperforms GATv2** in most configurations; both show similar patterns across architecturals
 - **Best overall:** GAT 4L + Residual (semi-supervised) = F1 0.71
 
 **Architectural Insights:**
@@ -317,7 +362,7 @@ Samples $u$ neighbors (with replacement if needed); aggregators learn different 
 
 $$\text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^T}{\sqrt{d_k}}\right)\mathbf{V}$$
 
-where $\mathbf{Q} = \mathbf{W}_Q\mathbf{h}_i$, $\mathbf{K} = \mathbf{W}_K\mathbf{h}_j$, $\mathbf{V} = \mathbf{W}_V\mathbf{h}_j$
+<!-- where $\mathbf{Q} = \mathbf{W}_Q\mathbf{h}_i$, $\mathbf{K} = \mathbf{W}_K\mathbf{h}_j$, $\mathbf{V} = \mathbf{W}_V\mathbf{h}_j$ -->
 
 Separate Q/K/V projections provide more expressiveness than GAT; captures longer-range dependencies
 
@@ -388,13 +433,15 @@ Separate Q/K/V projections provide more expressiveness than GAT; captures longer
 3. **Contrastive Learning:** BGRL (0.58) > CoLA (0.53) for this task
 
 **Critical Finding:**
-Generic reconstruction tasks may **smooth embeddings too much**, blurring the sharp decision boundaries needed for rare illicit nodes
-
-**Conclusion:** 
-Generic reconstruction tasks may smooth embeddings too much, blurring the sharp decision boundaries needed for rare illicit nodes. For Bitcoin fraud detection, **supervised learning with labeled data** provides clearer discriminative signals than self-supervised graph reconstruction methods
+Generic reconstruction tasks may **smooth embeddings too much**, blurring the sharp decision boundaries needed for rare illicit nodes. For Bitcoin fraud detection, **supervised learning with labeled data** provides clearer discriminative signals than self-supervised graph reconstruction methods
 
 ---
-# Result
+<div style="text-align: center;">
+
+# Result Summary
+
+</div>
+
 ---
 
 # Overall Comparison
@@ -431,9 +478,8 @@ Generic reconstruction tasks may smooth embeddings too much, blurring the sharp 
 2. **Graph destruction:** Unknown node removal breaks connectivity (77% unknowns)
 3. **Unknown label noise:** 77% unlabeled data introduces training instability  
 4. **Missing edge features:** Node-only information limits relational learning
-5. **Temporal isolation:** Disconnected timesteps prevent fraud pattern evolution modeling
-6. **Sparse connectivity:** Low average degree (~2.3) limits message passing effectiveness
-7. **Over-smoothing risk:** Multiple layers blur rare fraud signal boundaries
+5. **Sparse connectivity:** Low average degree (~2.3) limits message passing effectiveness
+6. **Over-smoothing risk:** Multiple layers blur rare fraud signal boundaries
 
 ---
 
@@ -441,14 +487,10 @@ Generic reconstruction tasks may smooth embeddings too much, blurring the sharp 
 
 **Time Step 43 Market Event Impact:**
 
-![width:800px](images/time_eval.png)
-![width:800px](images/F1_b4_aft.png)
+![width:800px center](images/time_eval.png)
+<!-- ![width:800px](images/F1_b4_aft.png) -->
 
-**Observations:**
-- **Catastrophic performance drop** at time step 43 across ALL models
-- Dark market closure fundamentally changed fraud patterns
-- Models trained on pre-closure data cannot generalize
-- Highlights critical need for continual learning / temporal adaptation
+**Catastrophic performance drop** at time step 43 across ALL models. Dark market closure fundamentally changed fraud patterns, models trained on pre-closure data cannot generalize. This reinforces the challenge for fraud detection and highlights critical need for continual learning / temporal adaptation
 
 ---
 
@@ -465,6 +507,8 @@ Generic reconstruction tasks may smooth embeddings too much, blurring the sharp 
 - **Attention mechanisms matter:** Adaptive neighbor weighting outperforms fixed aggregation schemes
 - **SSL objectives misalign:** Generic reconstruction tasks don't capture fraud-specific decision boundaries
 - **Graph structure helps selectively:** Benefits emerge only with sophisticated attention and residual connections
+---
+# Conclusion & Key Takeaways
 
 **Critical Challenge - Temporal Robustness:**
 - **Universal failure:** All models collapse after market regime change (97-100% performance drop)
@@ -485,6 +529,8 @@ Generic reconstruction tasks may smooth embeddings too much, blurring the sharp 
 - **Masked graph autoencoders:** GraphMAE for better fraud signal preservation
 - **Sharp decision boundaries:** SSL objectives aligned with rare anomaly detection
 
+---
+# Future Work
 **3. Enhanced Graph Representations:**
 - **Heterogeneous modeling:** Exchanges, mixers, smart contracts as distinct node types; Add edge features for better representation
 - **Higher-order features:** Multi-hop flow patterns, temporal transaction chains
